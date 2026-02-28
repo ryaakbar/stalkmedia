@@ -128,41 +128,13 @@ const platformConfig = {
     }
 };
 
-// ---- PLATFORM DROPDOWN ----
-const trigger = document.getElementById('platformTrigger');
-const options = document.getElementById('platformOptions');
-const arrow = document.getElementById('dropdownArrow');
-
-trigger.addEventListener('click', (e) => {
-    e.stopPropagation();
-    const isOpen = options.classList.contains('open');
-    isOpen ? closeDropdown() : openDropdown();
-});
-
-function openDropdown() {
-    options.classList.add('open');
-    trigger.classList.add('open');
-}
-function closeDropdown() {
-    options.classList.remove('open');
-    trigger.classList.remove('open');
-}
-
-document.addEventListener('click', () => closeDropdown());
-
-document.querySelectorAll('.platform-option').forEach(opt => {
-    opt.addEventListener('click', function (e) {
-        e.stopPropagation();
-        const val = this.dataset.value;
-        const iconClass = this.dataset.icon;
-        const text = this.innerText.trim();
-
-        currentPlatform = val;
-        document.getElementById('selectedText').innerText = text;
-        document.getElementById('selectedIcon').innerHTML = `<i class="${iconClass}" style="color:${this.dataset.color}"></i>`;
-
+// ---- PLATFORM GRID ----
+document.querySelectorAll('.plat-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        document.querySelectorAll('.plat-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        currentPlatform = this.dataset.value;
         resetResult();
-        closeDropdown();
     });
 });
 
