@@ -178,6 +178,12 @@ body::after {
     overflow: hidden; position: relative;
     transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
 }
+.glass-card.main-card {
+    overflow: visible;
+}
+.glass-card.main-card::before {
+    border-radius: var(--radius-xl);
+}
 .glass-card:hover { border-color: var(--border-blue); box-shadow: var(--shadow-card), var(--shadow-glow); }
 .glass-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent); }
 
