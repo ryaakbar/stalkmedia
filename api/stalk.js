@@ -175,39 +175,48 @@ async function githubStalk(user) {
 }
 
 async function instagramStalk(username) {
-    const jar = new CookieJar();
-    const client = wrapper(axios.create({ jar, withCredentials: true }));
-    const igCookie = "csrftoken=osAtGItPXdetQOXtk2IlfZ; datr=ygJMaBFtokCgDHvSHpjRBiXR; ig_did=4AFB2614-B27A-463C-88D7-634A167A23D1; wd=1920x1080; mid=aEwCygALAAHnO0uXycs4-HkvZeZG;"; 
-
     try {
-        const response = await client.get(
-            `https://www.instagram.com/api/v1/users/web_profile_info/?username=${username}`,
-            {
-                headers: {
-                    authority: "www.instagram.com",
-                    "user-agent": "Mozilla/5.0 (Linux; Android 9; GM1903 Build/PKQ1.190110.001; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/75.0.3770.143 Mobile Safari/537.36 Instagram 103.1.0.15.119 Android (28/9; 420dpi; 1080x2260; OnePlus; GM1903; OnePlus7; qcom; en_US; 162830167)",
-                    "x-ig-app-id": "936619743392459",
-                    cookie: igCookie
-                }
-            }
-        );
-        const user = response.data?.data?.user;
-        if (!user) throw new Error("No user data");
-
+        // Try scraping public page
+        const url = `https://www.instagram.com/${username}/?__a=1&__d=dis`;
+        const response = await axios.get(`https://www.instagram.com/${username}/`, {
+            headers: {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+                "Accept": "text/html,application/xhtml+xml",
+                "Accept-Language": "en-US,en;q=0.9",
+            },
+            timeout: 10000,
+        });
+        const html = response.data;
+        
+        // Extract from meta tags
+        const titleMatch = html.match(/<title>(.*?)<\/title>/);
+        const descMatch = html.match(/<meta property="og:description" content="(.*?)"/);
+        const imgMatch = html.match(/<meta property="og:image" content="(.*?)"/);
+        
+        const title = titleMatch ? titleMatch[1] : username;
+        const desc = descMatch ? descMatch[1] : "";
+        
+        // Parse followers from description like "1.2M Followers, 500 Following, 100 Posts"
+        const followersMatch = desc.match(/([\d,.]+[KMB]?)\s*Followers/i);
+        const followingMatch = desc.match(/([\d,.]+[KMB]?)\s*Following/i);
+        const postsMatch = desc.match(/([\d,.]+[KMB]?)\s*Posts/i);
+        
+        const nickname = title.replace(/\(@.*?\).*/, "").replace("• Instagram", "").trim();
+        
         return {
-            username: user.username,
-            nickname: user.full_name || user.username,
-            bio: user.biography,
-            profile_pic: user.profile_pic_url,
-            is_verified: user.is_verified,
+            username: username,
+            nickname: nickname || username,
+            bio: desc.split(" - ")[1] || "No bio.",
+            profile_pic: imgMatch ? imgMatch[1] : null,
+            is_verified: false,
             stats: {
-                followers: user.edge_followed_by?.count || 0,
-                following: user.edge_follow?.count || 0,
-                posts: user.edge_owner_to_timeline_media?.count || 0
+                followers: followersMatch ? followersMatch[1] : "N/A",
+                following: followingMatch ? followingMatch[1] : "N/A",
+                posts: postsMatch ? postsMatch[1] : "N/A"
             }
         };
     } catch (error) {
-        throw new Error("Instagram Profile not found");
+        throw new Error("Instagram Profile not found or is private");
     }
 }
 
@@ -247,35 +256,44 @@ async function pinterestStalk(username) {
 
 async function twitterStalk(username) {
     try {
-        const response = await axios.get(
-            `https://x.com/i/api/graphql/32pL5BWe9WKeSK1MoPvFQQ/UserByScreenName?variables=%7B%22screen_name%22%3A%22${username}%22%7D&features=%7B%22hidden_profile_subscriptions_enabled%22%3Atrue%2C%22profile_label_improvements_pcf_label_in_post_enabled%22%3Atrue%2C%22rweb_tipjar_consumption_enabled%22%3Atrue%2C%22responsive_web_graphql_exclude_directive_enabled%22%3Atrue%2C%22verified_phone_label_enabled%22%3Afalse%2C%22subscriptions_verification_info_is_identity_verified_enabled%22%3Atrue%2C%22subscriptions_verification_info_verified_since_enabled%22%3Atrue%2C%22highlights_tweets_tab_ui_enabled%22%3Atrue%2C%22responsive_web_twitter_article_notes_tab_enabled%22%3Atrue%2C%22subscriptions_feature_can_gift_premium%22%3Atrue%2C%22creator_subscriptions_tweet_preview_api_enabled%22%3Atrue%2C%22responsive_web_graphql_skip_user_profile_image_extensions_enabled%22%3Afalse%2C%22responsive_web_graphql_timeline_navigation_enabled%22%3Atrue%7D`,
-            {
-                headers: {
-                    authorization: "Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA",
-                    cookie: 'guest_id=v1%3A173113403636768133;',
-                    "x-csrf-token": "a0b42c9fa97da6bf8505d9fd66cbe549c3b4a33d028d877fb0ae9a1d1b61d814fa831a4f097249ee4dea9a41f5050d12bda9806ce1816e5522572b2f0a81a3bc4f9a9bd2f2fdf4edef38a7759d03648f"
-                }
-            }
-        );
+        // Scrape public Twitter/X page
+        const response = await axios.get(`https://x.com/${username}`, {
+            headers: {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+                "Accept": "text/html,application/xhtml+xml",
+                "Accept-Language": "en-US,en;q=0.9",
+            },
+            timeout: 10000,
+        });
         
-        const userData = response.data?.data?.user?.result;
-        if (!userData) throw new Error("No data");
-        const legacy = userData.legacy;
+        const html = response.data;
+        const $ = cheerio.load(html);
+        
+        const titleMatch = html.match(/<title>(.*?)<\/title>/);
+        const descMatch = html.match(/<meta property="og:description" content="(.*?)"/);
+        const imgMatch = html.match(/<meta property="og:image" content="(.*?)"/);
+        
+        const title = titleMatch ? titleMatch[1].replace(" / X", "").trim() : username;
+        const desc = descMatch ? descMatch[1] : "";
+        
+        const followersMatch = desc.match(/([\d,.]+[KMB]?)\s*Followers/i);
+        const followingMatch = desc.match(/([\d,.]+[KMB]?)\s*Following/i);
+        const tweetsMatch = desc.match(/([\d,.]+[KMB]?)\s*(?:Tweets|Posts)/i);
         
         return {
-            username: legacy.screen_name,
-            nickname: legacy.name,
-            bio: legacy.description,
-            profile_pic: legacy.profile_image_url_https?.replace("_normal", "_400x400"),
-            is_verified: userData.is_blue_verified,
+            username: username,
+            nickname: title || username,
+            bio: desc || "No bio.",
+            profile_pic: imgMatch ? imgMatch[1] : null,
+            is_verified: false,
             stats: {
-                followers: legacy.followers_count,
-                following: legacy.friends_count,
-                tweets: legacy.statuses_count
+                followers: followersMatch ? followersMatch[1] : "N/A",
+                following: followingMatch ? followingMatch[1] : "N/A",
+                tweets: tweetsMatch ? tweetsMatch[1] : "N/A"
             }
         };
     } catch (error) {
-        throw new Error("Twitter user not found");
+        throw new Error("Twitter/X user not found");
     }
 }
 
