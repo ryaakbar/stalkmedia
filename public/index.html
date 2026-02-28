@@ -57,56 +57,51 @@
             <p class="hero-sub">Cari info profil dari 7 platform sekaligus. Gratis, cepat, dan tanpa login.</p>
         </div>
 
-        <div class="glass-card main-card reveal delay-1" id="mainCard">
+        <div class="glass-card reveal delay-1" id="mainCard">
             <div class="card-header">
-                <div class="avatar-wrap">
-                    <div class="brand-icon-wrap" style="width:50px;height:50px;border-radius:13px;font-size:1.3rem;">
-                        <i class="fa-solid fa-user-secret"></i>
-                    </div>
+                <div class="brand-icon-wrap" style="width:50px;height:50px;border-radius:13px;font-size:1.3rem;">
+                    <i class="fa-solid fa-user-secret"></i>
                 </div>
                 <div class="card-header-info">
-                    <div class="header-label">🌐 Open Access </div>
+                    <div class="header-label">🌐 Open Access · No Login Needed</div>
                     <div class="header-title">Masukkan target username kamu</div>
                 </div>
             </div>
 
             <div class="card-body">
 
-                <!-- Platform Selector -->
+                <!-- Platform Grid -->
                 <div class="input-group">
-                    <label class="input-label">Platform</label>
-                    <div class="platform-select-wrap" id="platformTrigger">
-                        <div class="platform-selected">
-                            <div class="platform-selected-icon" id="selectedIcon">
-                                <i class="fa-brands fa-tiktok"></i>
-                            </div>
-                            <span id="selectedText">TikTok</span>
-                        </div>
-                        <i class="fa-solid fa-chevron-down platform-arrow" id="dropdownArrow"></i>
-
-                        <div class="platform-options" id="platformOptions">
-                            <div class="platform-option" data-value="tiktok" data-icon="fa-brands fa-tiktok" data-color="#fff">
-                                <i class="fa-brands fa-tiktok"></i> TikTok
-                            </div>
-                            <div class="platform-option" data-value="instagram" data-icon="fa-brands fa-instagram" data-color="#e1306c">
-                                <i class="fa-brands fa-instagram" style="color:#e1306c"></i> Instagram
-                            </div>
-                            <div class="platform-option" data-value="github" data-icon="fa-brands fa-github" data-color="#aaa">
-                                <i class="fa-brands fa-github" style="color:#aaa"></i> GitHub
-                            </div>
-                            <div class="platform-option" data-value="twitter" data-icon="fa-brands fa-twitter" data-color="#1da1f2">
-                                <i class="fa-brands fa-twitter" style="color:#1da1f2"></i> Twitter / X
-                            </div>
-                            <div class="platform-option" data-value="youtube" data-icon="fa-brands fa-youtube" data-color="#ff0000">
-                                <i class="fa-brands fa-youtube" style="color:#ff0000"></i> YouTube
-                            </div>
-                            <div class="platform-option" data-value="pinterest" data-icon="fa-brands fa-pinterest" data-color="#e60023">
-                                <i class="fa-brands fa-pinterest" style="color:#e60023"></i> Pinterest
-                            </div>
-                            <div class="platform-option" data-value="roblox" data-icon="fa-solid fa-gamepad" data-color="#ff4444">
-                                <i class="fa-solid fa-gamepad" style="color:#ff4444"></i> Roblox
-                            </div>
-                        </div>
+                    <label class="input-label">Pilih Platform</label>
+                    <div class="platform-grid-btns" id="platformGrid">
+                        <button class="plat-btn active" data-value="tiktok">
+                            <i class="fa-brands fa-tiktok"></i>
+                            <span>TikTok</span>
+                        </button>
+                        <button class="plat-btn" data-value="instagram">
+                            <i class="fa-brands fa-instagram" style="color:#e1306c"></i>
+                            <span>Instagram</span>
+                        </button>
+                        <button class="plat-btn" data-value="github">
+                            <i class="fa-brands fa-github" style="color:#aaa"></i>
+                            <span>GitHub</span>
+                        </button>
+                        <button class="plat-btn" data-value="twitter">
+                            <i class="fa-brands fa-twitter" style="color:#1da1f2"></i>
+                            <span>Twitter</span>
+                        </button>
+                        <button class="plat-btn" data-value="youtube">
+                            <i class="fa-brands fa-youtube" style="color:#ff0000"></i>
+                            <span>YouTube</span>
+                        </button>
+                        <button class="plat-btn" data-value="pinterest">
+                            <i class="fa-brands fa-pinterest" style="color:#e60023"></i>
+                            <span>Pinterest</span>
+                        </button>
+                        <button class="plat-btn" data-value="roblox">
+                            <i class="fa-solid fa-gamepad" style="color:#ff6b35"></i>
+                            <span>Roblox</span>
+                        </button>
                     </div>
                 </div>
 
@@ -124,17 +119,6 @@
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
                         </button>
                     </div>
-                </div>
-
-                <!-- Platform Tags -->
-                <div class="platform-tags">
-                    <div class="tag">📱 TikTok</div>
-                    <div class="tag">📸 Instagram</div>
-                    <div class="tag">🐙 GitHub</div>
-                    <div class="tag">𝕏 Twitter</div>
-                    <div class="tag">▶️ YouTube</div>
-                    <div class="tag">📌 Pinterest</div>
-                    <div class="tag">🎮 Roblox</div>
                 </div>
 
                 <button id="stalkBtn" onclick="doStalk()" class="cyber-button">
@@ -224,7 +208,6 @@
 
     </div>
 
-    <!-- Scroll buttons -->
     <div class="scroll-btns" id="scrollBtns">
         <button class="scroll-btn" onclick="smoothScrollTo('top')" title="Scroll to top">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
